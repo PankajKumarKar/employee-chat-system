@@ -1,28 +1,33 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
-
-const initialValues = {
-  email: "",
-  password: "",
-};
-
-const validationSchema = Yup.object({
-  email: Yup.string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  password: Yup.string()
-    .min(8, "Password must be at least 8 characters")
-    .required("Password is required"),
-});
-
-const handleSubmit = (values, actions) => {
-  console.log("Form submitted:", values);
-  actions.setSubmitting(false);
-};
+import { Link, useNavigate } from "react-router-dom";
+import { loginHandler } from "../services/employeeService";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const initialValues = {
+    username: "",
+    //email: "",
+    password: "",
+  };
+
+  const validationSchema = Yup.object({
+    username: Yup.string().required("Usernmae is required !"),
+    //email: Yup.string()
+    //.email("Invalid email format")
+    //.required("Email is required"),
+    password: Yup.string()
+      .min(8, "Password must be at least 8 characters")
+      .required("Password is required"),
+  });
+
+  const handleSubmit = async (values, actions) => {
+    console.log("Form submitted:", values);
+    actions.setSubmitting(false);
+    const { name } = await loginHandler(values);
+    if (name) navigate("/dashboard");
+  };
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       <Link
@@ -45,7 +50,9 @@ const LoginPage = () => {
       {/* Right Side: Login Form */}
       <div className="md:w-1/2 flex justify-center items-center h-screen">
         <div className="w-11/12 md:w-1/2">
-          <h1 className="text-3xl font-semibold mb-6 text-center">Sign In</h1>
+          <h1 className="text-3xl font-semibold mb-6 text-blue-500 ">
+            Sign In Form
+          </h1>
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -53,7 +60,7 @@ const LoginPage = () => {
           >
             {(formik) => (
               <Form>
-                <div className="mb-4">
+                {/* <div className="mb-4">
                   <label htmlFor="email" className="block font-semibold">
                     Email:
                   </label>
@@ -68,6 +75,26 @@ const LoginPage = () => {
                   />
                   <ErrorMessage
                     name="email"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div> */}
+
+                <div className="mb-4">
+                  <label htmlFor="username" className="block font-semibold">
+                    Username:
+                  </label>
+                  <Field
+                    type="text"
+                    name="username"
+                    className={`w-full px-3 py-2 rounded-lg border ${
+                      formik.touched.username && formik.errors.username
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                  />
+                  <ErrorMessage
+                    name="username"
                     component="div"
                     className="text-red-500 text-sm mt-1"
                   />
@@ -103,7 +130,7 @@ const LoginPage = () => {
                   <span>Are you new ?</span>
                   <Link
                     to="/signup"
-                    className="text-blue-500 hover:text-blue-800 font-semibold cursor-pointer"
+                    className="text-blue-500 text-lg hover:text-blue-800 font-semibold cursor-pointer"
                   >
                     Go to Sign Up
                   </Link>

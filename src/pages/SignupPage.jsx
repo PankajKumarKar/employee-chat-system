@@ -1,13 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { registerHandler } from "../services/employeeService";
 
 const SignupPage = () => {
+  const navigate = useNavigate();
+
   const initialValues = {
-    profileImage: "",
-    fullName: "",
-    email: "",
+    //profileImage: "",
+    name: "",
+    mobile: "",
+    // email: "",
     password: "",
     confirmPassword: "",
     designation: "",
@@ -21,11 +25,14 @@ const SignupPage = () => {
   ];
 
   const validationSchema = Yup.object({
-    profileImage: Yup.string().required("Profile Image required !"),
-    fullName: Yup.string().required("Name is required !"),
-    email: Yup.string()
-      .email("Invalid email format !")
-      .required("Email is required !"),
+    // profileImage: Yup.string().required("Profile Image required !"),
+    name: Yup.string().required("Name is required !"),
+    // email: Yup.string()
+    //   .email("Invalid email format !")
+    //    .required("Email is required !"),
+    mobile: Yup.string()
+      .matches(/^[0-9]{10}$/, "Mobile must be exactly 10 digits")
+      .required("Mobile is required"),
     password: Yup.string()
       .required("Password is required")
       .matches(
@@ -38,9 +45,12 @@ const SignupPage = () => {
     designation: Yup.string().required("Disignation required !"),
   });
 
-  const handleSubmit = (values, actions) => {
+  const handleSubmit = async (values, actions) => {
     console.log("Form submitted:", values);
     actions.setSubmitting(false);
+    const { username } = await registerHandler(values);
+    alert(`Your User Name : ${username}`);
+    navigate("/login");
   };
 
   return (
@@ -64,7 +74,9 @@ const SignupPage = () => {
       {/* Right Side: Signup Form */}
       <div className="md:w-1/2 flex justify-center items-center">
         <div className="w-11/12 md:w-1/2">
-          <h1 className="text-3xl font-semibold mb-6 text-center">Sign Up</h1>
+          <h1 className="text-3xl font-semibold mb-6 mt-2 text-blue-500 ">
+            Sign Up Form
+          </h1>
 
           <Formik
             initialValues={initialValues}
@@ -73,7 +85,7 @@ const SignupPage = () => {
           >
             {(formik) => (
               <Form>
-                <div className="mb-4">
+                {/* <div className="mb-4">
                   <label htmlFor="name" className="block font-semibold">
                     Profile Image:
                   </label>
@@ -91,7 +103,7 @@ const SignupPage = () => {
                     component="div"
                     className="text-red-500 text-sm"
                   />
-                </div>
+                </div> */}
 
                 <div className="mb-4">
                   <label htmlFor="name" className="block font-semibold">
@@ -99,7 +111,7 @@ const SignupPage = () => {
                   </label>
                   <Field
                     type="text"
-                    name="fullName"
+                    name="name"
                     className={`w-full px-3 py-2 rounded-lg border ${
                       formik.touched.fullName && formik.errors.fullName
                         ? "border-red-500"
@@ -107,13 +119,33 @@ const SignupPage = () => {
                     }`}
                   />
                   <ErrorMessage
-                    name="fullName"
+                    name="name"
                     component="div"
                     className="text-red-500 text-sm"
                   />
                 </div>
 
                 <div className="mb-4">
+                  <label htmlFor="email" className="block font-semibold">
+                    Mobile:
+                  </label>
+                  <Field
+                    type="number"
+                    name="mobile"
+                    className={`w-full px-3 py-2 rounded-lg border ${
+                      formik.touched.mobile && formik.errors.mobile
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                  />
+                  <ErrorMessage
+                    name="mobile"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+
+                {/* <div className="mb-4">
                   <label htmlFor="email" className="block font-semibold">
                     Email:
                   </label>
@@ -131,7 +163,7 @@ const SignupPage = () => {
                     component="div"
                     className="text-red-500 text-sm"
                   />
-                </div>
+                </div> */}
 
                 <div className="mb-4">
                   <label htmlFor="password" className="block font-semibold">
@@ -203,14 +235,14 @@ const SignupPage = () => {
                   type="submit"
                   className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 w-full"
                 >
-                  Submit
+                  Sign Up
                 </button>
 
                 <div className="mt-3">
                   <span>Already Account?</span>
                   <Link
                     to={"/login"}
-                    className="text-lg font-semibold text-blue-700"
+                    className="text-lg font-semibold text-blue-500 hover:text-blue-900"
                   >
                     Go to Sign In
                   </Link>

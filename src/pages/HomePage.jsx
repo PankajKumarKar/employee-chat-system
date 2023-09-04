@@ -14,18 +14,18 @@ export default function HomePage() {
         <p className=" text-4xl text-gray-400 font-semibold ntransition-transform duration-500 transform hover:scale-110">
           Welcome
         </p>
-        <div className=" flex gap-x-8">
+        <div className=" flex gap-x-6">
           {/*  Sign up Button */}
           <Link
             to={"/signup"}
-            className="px-4 py-2 bg-gray-950 text-white font-semibold text-xl rounded-md hover:bg-gray-400 "
+            className="px-4 py-2  bg-gray-700 text-white font-semibold text-xl rounded-md hover:bg-gray-950 "
           >
             Sign Up
           </Link>
           {/* Login Button */}
           <Link
             to={"/login"}
-            className="px-4 py-2 bg-gray-950 text-white font-semibold text-xl rounded-md hover:bg-gray-400"
+            className="px-4 py-2 bg-gray-700 text-white font-semibold text-xl rounded-md hover:bg-gray-950"
           >
             Login
           </Link>
