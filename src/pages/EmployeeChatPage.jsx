@@ -3,10 +3,17 @@ import { logoutHandler } from "../services/employeeService";
 import { sendRequestWithBearerToken } from "../services/authorizationReq";
 import EmployeeList from "../components/EmployeeList";
 import { useNavigate } from "react-router-dom";
+import { useMessageList } from "../hooks/MessageContext";
 
 export default function EmployeeChatPage() {
   const user = JSON.parse(localStorage.getItem("user"));
   const [data, setData] = useState(null);
+
+  const { messageList } = useMessageList();
+
+  console.log(messageList);
+
+  const [sentMess, setSentMess] = useState();
 
   const navigate = useNavigate();
 
@@ -73,36 +80,46 @@ export default function EmployeeChatPage() {
                 </button>
               </div>
               {/* Chat messages */}
-              <div className="flex-grow bg-white p-4 rounded shadow-lg overflow-y-scroll">
-                {/* Individual chat messages go here */}
-                <div className="mb-4 flex justify-between">
-                  <div className="text-gray-600">Employee 1:</div>
-                  <img
-                    src="https://img.freepik.com/free-vector/man-with-mustache_1308-83591.jpg?size=626&ext=jpg&ga=GA1.1.1070736208.1691070650&semt=ais"
-                    alt=""
-                    className="w-14 rounded-full"
-                  />
-                </div>
-                <div className="mb-4">
-                  <div className="text-gray-600">You:</div>
-                  <div className="bg-green-100 p-2 rounded-lg">
-                    Hi! I have a question about the project.
+              {messageList && (
+                <div className="flex-grow bg-white p-4 rounded shadow-lg overflow-y-scroll">
+                  {/* Individual chat messages go here */}
+                  <div className="mb-4 flex justify-between">
+                    <div className="text-gray-600">{messageList.emp_name}:</div>
+                    <img
+                      src="https://img.freepik.com/free-vector/man-with-mustache_1308-83591.jpg?size=626&ext=jpg&ga=GA1.1.1070736208.1691070650&semt=ais"
+                      alt=""
+                      className="w-14 rounded-full"
+                    />
                   </div>
+                  <div className="mb-4">
+                    <div className="text-gray-600">You:</div>
+                    {messageList.msg_history.map((message, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-green-100 p-2 mt-4 rounded-lg"
+                      >
+                        {message.content}
+                      </div>
+                    ))}
+                  </div>
+                  {/* Add more chat messages as needed */}
                 </div>
-                {/* Add more chat messages as needed */}
-              </div>
+              )}
               {/* Chat input area */}
-              <div className="bg-white p-4">
-                {/* Chat input form goes here */}
-                <textarea
-                  className="w-full p-2 border rounded"
-                  placeholder="Type your message..."
-                  defaultValue={""}
-                />
-                <button className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800">
-                  Send
-                </button>
-              </div>
+              {messageList && (
+                <div className="bg-white p-4">
+                  {/* Chat input form goes here */}
+                  <textarea
+                    className="w-full p-2 border rounded"
+                    placeholder="Type your message..."
+                    value={sentMess || ""}
+                    onChange={(e) => setSentMess(e.target.value)}
+                  />
+                  <button className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800">
+                    Send
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

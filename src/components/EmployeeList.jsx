@@ -1,10 +1,22 @@
 import React from "react";
+import { useMessageList } from "../hooks/MessageContext";
 
 export default function EmployeeList({ emp }) {
+  const { fetchMessage } = useMessageList();
+  const user = JSON.parse(localStorage.getItem("user"));
+
   return (
     <li className="mb-4 flex justify-between items-center">
-      {console.log(emp)}
-      <p className="font-medium cursor-pointer  hover:text-blue-600">
+      <p
+        className="font-medium cursor-pointer  hover:text-blue-600"
+        onClick={() =>
+          fetchMessage({
+            user1_id: user.id,
+            user2_id: emp.id,
+            emp_name: emp.username,
+          })
+        }
+      >
         {emp.username}
       </p>
       <img
