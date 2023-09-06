@@ -5,17 +5,19 @@ export default function EmployeeList({ emp }) {
   const { fetchMessage } = useMessageList();
   const user = JSON.parse(localStorage.getItem("user"));
 
+  function handleMessageList() {
+    fetchMessage({
+      user1_id: user.id,
+      user2_id: emp.id,
+      emp_name: emp.username,
+    });
+  }
+
   return (
     <li className="mb-4 flex justify-between items-center">
       <p
         className="font-medium cursor-pointer  hover:text-blue-600"
-        onClick={() =>
-          fetchMessage({
-            user1_id: user.id,
-            user2_id: emp.id,
-            emp_name: emp.username,
-          })
-        }
+        onClick={handleMessageList}
       >
         {emp.username}
       </p>

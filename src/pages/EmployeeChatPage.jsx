@@ -4,14 +4,13 @@ import { sendRequestWithBearerToken } from "../services/authorizationReq";
 import EmployeeList from "../components/EmployeeList";
 import { useNavigate } from "react-router-dom";
 import { useMessageList } from "../hooks/MessageContext";
+import { sentMessage } from "../services/chatService";
 
 export default function EmployeeChatPage() {
   const user = JSON.parse(localStorage.getItem("user"));
   const [data, setData] = useState(null);
 
-  const { messageList } = useMessageList();
-
-  console.log(messageList);
+  const { messageList, displayMessage } = useMessageList();
 
   const [sentMess, setSentMess] = useState();
 
@@ -32,10 +31,21 @@ export default function EmployeeChatPage() {
 
   // ...
 
-  useEffect(() => {
-    console.log(data); // Log data when it changes
-  }, [data]);
+  let res;
+  //Send Message
+  async function sendMessageHandle() {
+    let res = await sentMessage({
+      conversation_id: messageList.convo_id[0].id,
+      sender_id: user.id,
+      content: sentMess,
+    });
 
+    setSentMess("");
+    console.log(res.message);
+    if (res.message) displayMessage();
+  }
+
+  //logout
   function logout() {
     logoutHandler();
     navigate("/login");
@@ -84,7 +94,9 @@ export default function EmployeeChatPage() {
                 <div className="flex-grow bg-white p-4 rounded shadow-lg overflow-y-scroll">
                   {/* Individual chat messages go here */}
                   <div className="mb-4 flex justify-between">
-                    <div className="text-gray-600">{messageList.emp_name}:</div>
+                    <div className="text-gray-600 font-semibold text-3xl">
+                      {messageList.emp_name}:
+                    </div>
                     <img
                       src="https://img.freepik.com/free-vector/man-with-mustache_1308-83591.jpg?size=626&ext=jpg&ga=GA1.1.1070736208.1691070650&semt=ais"
                       alt=""
@@ -93,7 +105,7 @@ export default function EmployeeChatPage() {
                   </div>
                   <div className="mb-4">
                     <div className="text-gray-600">You:</div>
-                    {messageList.msg_history.map((message, idx) => (
+                    {messageList.msg_history.reverse().map((message, idx) => (
                       <div
                         key={idx}
                         className="bg-green-100 p-2 mt-4 rounded-lg"
@@ -115,7 +127,10 @@ export default function EmployeeChatPage() {
                     value={sentMess || ""}
                     onChange={(e) => setSentMess(e.target.value)}
                   />
-                  <button className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800">
+                  <button
+                    className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800"
+                    onClick={sendMessageHandle}
+                  >
                     Send
                   </button>
                 </div>
